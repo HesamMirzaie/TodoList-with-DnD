@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { IoIosAddCircle } from 'react-icons/io';
 
 interface InputProps {
   onSubmit: (input: string) => void;
@@ -20,10 +21,10 @@ function Input({ onSubmit }: InputProps) {
         onChange={(e) => setInput(e.target.value)}
       />
       <button
-        className=" border-none rounded-[10px] py-[10px] px-[15px] bg-[#2563eb] text-white"
+        className=" border-none rounded-[10px] py-[7px] px-[10px] bg-black text-white text-3xl"
         onClick={handleSubmit}
       >
-        Add
+        <IoIosAddCircle />
       </button>
     </div>
   );

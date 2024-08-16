@@ -5,7 +5,15 @@ import {
 import { Task } from '../types/type';
 import Column from './Column';
 
-function ColumnContainer({ tasks }: { tasks: Task[] }) {
+function ColumnContainer({
+  tasks,
+  toggleTaskChecked,
+  deleteTask,
+}: {
+  tasks: Task[];
+  toggleTaskChecked: (id: number) => void;
+  deleteTask: (id: number) => void;
+}) {
   return (
     <ul
       className=" 
@@ -20,7 +28,12 @@ function ColumnContainer({ tasks }: { tasks: Task[] }) {
     >
       <SortableContext items={tasks} strategy={verticalListSortingStrategy}>
         {tasks.map((task) => (
-          <Column key={task.id} task={task} />
+          <Column
+            toggleTaskChecked={toggleTaskChecked}
+            deleteTask={deleteTask}
+            key={task.id}
+            task={task}
+          />
         ))}
       </SortableContext>
     </ul>

@@ -15,14 +15,16 @@ import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import Input from './components/Input';
 
 function App() {
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: 1, title: 'Add tasks to homaepage' },
-    { id: 2, title: 'Fix Styling in about sections' },
-    { id: 3, title: 'Lern how to center a div' },
-  ]);
+  const [tasks, setTasks] = useState<Task[]>([]);
 
   const addTask = (title: string) => {
-    setTasks((task) => [...task, { id: task.length + 1, title }]);
+    setTasks((task) => [...task, { id: task.length + 1, title, check: false }]);
+  };
+  // const editTask = (title: string) => {
+  //   setTasks((task) => [...task, { id: task.length + 1, title, check: false }]);
+  // };
+  const deleteTask = (id: number) => {
+    setTasks((prevTask) => prevTask.filter((task) => task.id === id));
   };
 
   const getTaskId = (id: number) => tasks.findIndex((task) => task.id === id);
@@ -37,6 +39,14 @@ function App() {
 
       return arrayMove(task, originalPos, newPos);
     });
+  };
+
+  const toggleTaskChecked = (id: number) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === id ? { ...task, check: !task.check } : task
+      )
+    );
   };
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -55,14 +65,19 @@ function App() {
   mt-[10px]
   "
     >
-      <h1>My Tasks ✅</h1>
       <DndContext
         sensors={sensors}
         onDragEnd={handleDragEnd}
         collisionDetection={closestCorners}
       >
         <Input onSubmit={addTask} />
-        <ColumnContainer tasks={tasks} />
+        {tasks.length === 0 ? null : (
+          <ColumnContainer
+            tasks={tasks}
+            toggleTaskChecked={toggleTaskChecked}
+            deleteTask={deleteTask}
+          />
+        )}
       </DndContext>
     </div>
   );
