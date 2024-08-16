@@ -18,13 +18,13 @@ function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
 
   const addTask = (title: string) => {
-    setTasks((task) => [...task, { id: task.length + 1, title, check: false }]);
+    setTasks((task) => [...task, { id: Date.now(), title, check: false }]);
   };
-  // const editTask = (title: string) => {
-  //   setTasks((task) => [...task, { id: task.length + 1, title, check: false }]);
-  // };
+
   const deleteTask = (id: number) => {
-    setTasks((prevTask) => prevTask.filter((task) => task.id === id));
+    setTasks((prevTasks) => {
+      return prevTasks.filter((task) => task.id !== id);
+    });
   };
 
   const getTaskId = (id: number) => tasks.findIndex((task) => task.id === id);

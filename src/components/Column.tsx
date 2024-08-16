@@ -21,7 +21,17 @@ function Column({
     transform: CSS.Transform.toString(transform),
   };
 
-  const handleCheckboxClick = (event: React.PointerEvent) => {
+  const handleCheckboxClick = (event: React.PointerEvent<HTMLInputElement>) => {
+    event.stopPropagation();
+  };
+
+  const handleTrashIconClick = (event: React.MouseEvent<SVGElement>) => {
+    event.stopPropagation();
+    deleteTask(task.id);
+  };
+
+  const preventDragStart = (event: React.PointerEvent<SVGElement>) => {
+    event.preventDefault();
     event.stopPropagation();
   };
 
@@ -31,7 +41,7 @@ function Column({
       {...attributes}
       {...listeners}
       style={style}
-      className="bg-white rounded-[5px] shadow w-full p-[20px] flex items-center justify-between  touch-none cursor-grab"
+      className="bg-white rounded-[5px] shadow w-full p-[20px] flex items-center justify-between touch-none cursor-grab"
     >
       <div className="flex justify-start items-center gap-[20px]">
         <input
@@ -43,15 +53,17 @@ function Column({
         />
         <li className={`${task.check ? 'line-through' : ''}`}>{task.title}</li>
       </div>
-      <div className=" flex gap-x-3">
+      <div className="flex gap-x-3">
         <MdEdit
-          onPointerDown={handleCheckboxClick}
+          onClick={(event: React.MouseEvent<SVGElement>) => {
+            event.stopPropagation();
+            // Handle edit task logic here
+          }}
           className="text-2xl cursor-pointer"
         />
-
         <FaTrashAlt
-          onClick={() => deleteTask(task.id)}
-          onPointerDown={handleCheckboxClick}
+          onClick={handleTrashIconClick}
+          onPointerDown={preventDragStart}
           className="text-2xl cursor-pointer hover:opacity-55"
         />
       </div>
