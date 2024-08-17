@@ -43,7 +43,10 @@ function Column({ task }: ColumnProps) {
       <div className="flex justify-start items-center gap-[20px]">
         <input
           type="checkbox"
-          className="h-[20px] w-[20px]"
+          className="relative peer shrink-0 rounded-full
+          appearance-none w-4 h-4 border-2 border-black bg-white
+          mt-1
+          checked:bg-black checked:border-0"
           checked={task.check}
           onChange={() => toggleTaskChecked(task.id)}
           onPointerDown={(e) => e.stopPropagation()}
@@ -58,11 +61,15 @@ function Column({ task }: ColumnProps) {
               if (e.key === 'Enter') handleEditConfirm();
               if (e.key === 'Escape') setEditMode(false);
             }}
-            className="border rounded p-1"
+            className="border p-1 rounded-md"
             autoFocus
           />
         ) : (
-          <li className={`${task.check ? 'line-through' : ''}`}>
+          <li
+            className={`${
+              task.check ? 'line-through' : ''
+            } text-md tracking-[3px]  `}
+          >
             {task.title}
           </li>
         )}
@@ -71,7 +78,7 @@ function Column({ task }: ColumnProps) {
         <MdEdit
           onClick={() => setEditMode(true)}
           onPointerDown={(e) => e.preventDefault()}
-          className="text-2xl cursor-pointer"
+          className="text-2xl cursor-pointer hover:opacity-55"
         />
         <FaTrashAlt
           onClick={() => deleteTask(task.id)}
