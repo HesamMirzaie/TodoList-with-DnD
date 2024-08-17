@@ -1,61 +1,19 @@
-import {
-  closestCorners,
-  DndContext,
-  DragEndEvent,
-  KeyboardSensor,
-  PointerSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
+import { closestCorners, DndContext } from '@dnd-kit/core';
 import ColumnContainer from './components/ColumnContainer';
 import Input from './components/Input';
-import useLocalStorageTasks from './hooks/useLocalStorageTasks';
-import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { useContext } from 'react';
+import { TodoContext } from './context/TodoContext';
 
 function App() {
-  const [tasks, setTasks] = useLocalStorageTasks('tasks', []);
-
-  const addTask = (title: string) => {
-    setTasks((task) => [...task, { id: Date.now(), title, check: false }]);
-  };
-
-  const deleteTask = (id: number) => {
-    setTasks((prevTasks) => {
-      return prevTasks.filter((task) => task.id !== id);
-    });
-  };
-
-  const getTaskId = (id: number) => tasks.findIndex((task) => task.id === id);
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (active.id === over?.id) return;
-
-    setTasks((task) => {
-      const originalPos = getTaskId(active.id as number);
-      const newPos = getTaskId(over?.id as number);
-
-      return arrayMove(task, originalPos, newPos);
-    });
-  };
-
-  const toggleTaskChecked = (id: number) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === id ? { ...task, check: !task.check } : task
-      )
-    );
-  };
-
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(TouchSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
+  const {
+    sensors,
+    handleDragEnd,
+    addTask,
+    tasks,
+    setTasks,
+    toggleTaskChecked,
+    deleteTask,
+  } = useContext(TodoContext);
   return (
     <div className="w-full h-full flex flex-col items-center gap-[50px] mt-[10px]">
       <DndContext

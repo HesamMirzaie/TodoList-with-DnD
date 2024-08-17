@@ -3,19 +3,15 @@ import { CSS } from '@dnd-kit/utilities';
 import { Task } from '../types/type';
 import { FaTrashAlt } from 'react-icons/fa';
 import { MdEdit } from 'react-icons/md';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { TodoContext } from '../context/TodoContext';
 
-function Column({
-  task,
-  toggleTaskChecked,
-  deleteTask,
-  setTasks, // Add setTasks here
-}: {
+interface ColumnProps {
   task: Task;
-  toggleTaskChecked: (id: number) => void;
-  deleteTask: (id: number) => void;
-  setTasks: (tasks: Task[]) => void; // Add setTasks to props
-}) {
+}
+
+function Column({ task }: ColumnProps) {
+  const { toggleTaskChecked, deleteTask, setTasks } = useContext(TodoContext);
   const [editMode, setEditMode] = useState(false);
   const [newTitle, setNewTitle] = useState(task.title);
 
@@ -27,33 +23,13 @@ function Column({
     transform: CSS.Transform.toString(transform),
   };
 
-  const handleCheckboxClick = (event: React.PointerEvent<HTMLInputElement>) => {
-    event.stopPropagation();
-  };
-
-  const handleTrashIconClick = (event: React.MouseEvent<SVGElement>) => {
-    event.stopPropagation();
-    deleteTask(task.id);
-  };
-
-  const preventDragStart = (event: React.PointerEvent<SVGElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-  };
-
-  const handleEditClick = (event: React.MouseEvent<SVGElement>) => {
-    event.stopPropagation();
-    setEditMode(true);
-  };
-
   const handleEditConfirm = () => {
-    if (newTitle.trim() !== '') {
-      // Update the task title and exit edit mode
+    if (newTitle.trim()) {
       setTasks((prevTasks) =>
         prevTasks.map((t) => (t.id === task.id ? { ...t, title: newTitle } : t))
       );
+      setEditMode(false);
     }
-    setEditMode(false);
   };
 
   return (
@@ -70,7 +46,7 @@ function Column({
           className="h-[20px] w-[20px]"
           checked={task.check}
           onChange={() => toggleTaskChecked(task.id)}
-          onPointerDown={handleCheckboxClick}
+          onPointerDown={(e) => e.stopPropagation()}
         />
         {editMode ? (
           <input
@@ -93,13 +69,13 @@ function Column({
       </div>
       <div className="flex gap-x-3">
         <MdEdit
-          onClick={handleEditClick}
-          onPointerDown={preventDragStart}
+          onClick={() => setEditMode(true)}
+          onPointerDown={(e) => e.preventDefault()}
           className="text-2xl cursor-pointer"
         />
         <FaTrashAlt
-          onClick={handleTrashIconClick}
-          onPointerDown={preventDragStart}
+          onClick={() => deleteTask(task.id)}
+          onPointerDown={(e) => e.preventDefault()}
           className="text-2xl cursor-pointer hover:opacity-55"
         />
       </div>
