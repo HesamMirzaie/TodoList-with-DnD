@@ -64,7 +64,7 @@ function App() {
         collisionDetection={closestCorners}
       >
         <Input onSubmit={addTask} />
-        {tasks.length === 0 ? null : (
+        {tasks.length > 0 && (
           <ColumnContainer
             setTasks={setTasks}
             tasks={tasks}

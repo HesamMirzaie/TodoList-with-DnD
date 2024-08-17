@@ -7,14 +7,14 @@ import Column from './Column';
 
 function ColumnContainer({
   tasks,
+  setTasks,
   toggleTaskChecked,
   deleteTask,
-  setTasks, // Add setTasks here
 }: {
   tasks: Task[];
+  setTasks: (tasks: Task[]) => void;
   toggleTaskChecked: (id: number) => void;
   deleteTask: (id: number) => void;
-  setTasks: (tasks: Task[]) => void; // Add setTasks to props
 }) {
   return (
     <ul
@@ -35,7 +35,7 @@ function ColumnContainer({
             deleteTask={deleteTask}
             key={task.id}
             task={task}
-            setTasks={setTasks} // Pass setTasks to each Column
+            setTasks={setTasks}
           />
         ))}
       </SortableContext>
