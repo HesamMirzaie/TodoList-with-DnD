@@ -3,16 +3,22 @@ import { CSS } from '@dnd-kit/utilities';
 import { Task } from '../types/type';
 import { FaTrashAlt } from 'react-icons/fa';
 import { MdEdit } from 'react-icons/md';
+import { useState } from 'react';
 
 function Column({
   task,
   toggleTaskChecked,
   deleteTask,
+  setTasks, // Add setTasks here
 }: {
   task: Task;
   toggleTaskChecked: (id: number) => void;
   deleteTask: (id: number) => void;
+  setTasks: (tasks: Task[]) => void; // Add setTasks to props
 }) {
+  const [editMode, setEditMode] = useState(false);
+  const [newTitle, setNewTitle] = useState(task.title);
+
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: task.id });
 
@@ -35,6 +41,21 @@ function Column({
     event.stopPropagation();
   };
 
+  const handleEditClick = (event: React.MouseEvent<SVGElement>) => {
+    event.stopPropagation();
+    setEditMode(true);
+  };
+
+  const handleEditConfirm = () => {
+    if (newTitle.trim() !== '') {
+      // Update the task title and exit edit mode
+      setTasks((prevTasks) =>
+        prevTasks.map((t) => (t.id === task.id ? { ...t, title: newTitle } : t))
+      );
+    }
+    setEditMode(false);
+  };
+
   return (
     <div
       ref={setNodeRef}
@@ -51,14 +72,29 @@ function Column({
           onChange={() => toggleTaskChecked(task.id)}
           onPointerDown={handleCheckboxClick}
         />
-        <li className={`${task.check ? 'line-through' : ''}`}>{task.title}</li>
+        {editMode ? (
+          <input
+            type="text"
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+            onBlur={handleEditConfirm}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleEditConfirm();
+              if (e.key === 'Escape') setEditMode(false);
+            }}
+            className="border rounded p-1"
+            autoFocus
+          />
+        ) : (
+          <li className={`${task.check ? 'line-through' : ''}`}>
+            {task.title}
+          </li>
+        )}
       </div>
       <div className="flex gap-x-3">
         <MdEdit
-          onClick={(event: React.MouseEvent<SVGElement>) => {
-            event.stopPropagation();
-            // Handle edit task logic here
-          }}
+          onClick={handleEditClick}
+          onPointerDown={preventDragStart}
           className="text-2xl cursor-pointer"
         />
         <FaTrashAlt

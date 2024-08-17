@@ -8,14 +8,13 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import { useState } from 'react';
 import ColumnContainer from './components/ColumnContainer';
-import { Task } from './types/type';
-import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import Input from './components/Input';
+import useLocalStorageTasks from './hooks/useLocalStorageTasks';
+import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 
 function App() {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useLocalStorageTasks('tasks', []);
 
   const addTask = (title: string) => {
     setTasks((task) => [...task, { id: Date.now(), title, check: false }]);
@@ -48,23 +47,17 @@ function App() {
       )
     );
   };
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(TouchSensor),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
   );
+
   return (
-    <div
-      className="
-  w-full
-  h-full
-  flex
-  flex-col
-  items-center
-  gap-[50px]
-  mt-[10px]
-  "
-    >
+    <div className="w-full h-full flex flex-col items-center gap-[50px] mt-[10px]">
       <DndContext
         sensors={sensors}
         onDragEnd={handleDragEnd}
@@ -73,6 +66,7 @@ function App() {
         <Input onSubmit={addTask} />
         {tasks.length === 0 ? null : (
           <ColumnContainer
+            setTasks={setTasks}
             tasks={tasks}
             toggleTaskChecked={toggleTaskChecked}
             deleteTask={deleteTask}

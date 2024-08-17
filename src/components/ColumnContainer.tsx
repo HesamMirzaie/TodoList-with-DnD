@@ -9,10 +9,12 @@ function ColumnContainer({
   tasks,
   toggleTaskChecked,
   deleteTask,
+  setTasks, // Add setTasks here
 }: {
   tasks: Task[];
   toggleTaskChecked: (id: number) => void;
   deleteTask: (id: number) => void;
+  setTasks: (tasks: Task[]) => void; // Add setTasks to props
 }) {
   return (
     <ul
@@ -33,6 +35,7 @@ function ColumnContainer({
             deleteTask={deleteTask}
             key={task.id}
             task={task}
+            setTasks={setTasks} // Pass setTasks to each Column
           />
         ))}
       </SortableContext>
